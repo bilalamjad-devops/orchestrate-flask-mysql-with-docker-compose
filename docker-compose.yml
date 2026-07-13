@@ -1,0 +1,44 @@
+version: "3.9"
+
+# This single file replaces everything that used to require manual commands:
+#   - docker network create ...
+#   - docker network connect ...
+#   - docker run (x2, with matching --network flags)
+#   - remembering to add -v for persistence
+#
+# docker compose up handles the network, the persistent volume, and the
+# startup order (waiting for MySQL to be healthy before starting Flask)
+# automatically, based only on what's declared here.
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db          # service name below -- compose's built-in DNS
+      DB_USER: root
+      DB_PASSWORD: changeme
+      DB_NAME: web_db
+      FLASK_DEBUG: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme
+      MYSQL_DATABASE: web_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql   # named volume -- survives `docker compose down`
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pchangeme"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql-data:
