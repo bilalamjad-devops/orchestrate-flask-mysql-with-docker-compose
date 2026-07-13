@@ -1,93 +1,180 @@
-# Stage 2: Orchestrating Flask + MySQL with docker-compose
+# Orchestrate a Flask + MySQL Application with Docker Compose
 
-> This is Stage 2 of a 5-stage migration series:
-> Stage 1: [containerize-flask-mysql-application](https://github.com/bilalamjad-devops/containerize-flask-mysql-application) → **Stage 2 (this repo): docker-compose** → Stage 3: Kubernetes → Stage 4: CI/CD → Stage 5: GitOps (ArgoCD)
+## Objective
 
-## Problem
+In the previous project, we started the Flask and MySQL containers manually using multiple `docker run` commands.
 
-In Stage 1, running this same two-container app manually required a specific,
-easy-to-get-wrong sequence of commands:
+In this project, we simplify the deployment by using **Docker Compose**. Instead of creating networks, running containers, and configuring environment variables manually, the entire application stack is defined in a single `docker-compose.yml` file.
 
-```bash
-docker network create twotier
-docker run -d --name mysql-dev --network=twotier -e MYSQL_ROOT_PASSWORD=changeme -e MYSQL_DATABASE=web_db -p 3306:3306 mysql:8.4
-docker run -p 5000:5000 --network=twotier --env-file .env --name flask-app-dev flask-mysql-demo
-```
+---
 
-In practice, this went wrong twice during real debugging:
+## Business Problem
 
-1. **Network mismatch** — the MySQL container was originally created on a
-   *different* network name than the Flask container was later run on
-   (`demo-net` vs `twotier`). Docker gave no upfront warning; the failure only
-   showed up as `Unknown MySQL server host 'mysql-dev'` at runtime, and required
-   inspecting both containers' `NetworkSettings.Networks` to diagnose.
-2. **No data persistence** — the MySQL container was started without a
-   volume. Any data written during testing would have been silently lost
-   the moment the container was removed (`docker rm`), since `/var/lib/mysql`
-   was only part of the container's own writable layer, not a separate volume.
+Managing multiple containers manually is repetitive and error-prone.
 
-Both problems are structural: they happen because networking and storage are
-handled as separate, manually-sequenced commands instead of one declared
-state.
+Every developer has to remember:
+
+- Create a Docker network
+- Start the MySQL container
+- Start the Flask container
+- Configure environment variables
+- Connect both containers to the same network
+
+As the application grows, this process becomes difficult to maintain.
+
+---
 
 ## Solution
 
-`docker-compose.yml` declares both containers, their shared network, and a
-named persistent volume in one file. One command:
+Docker Compose allows us to define the complete application stack in a single YAML file.
 
-```bash
-docker compose up --build
+With one command, Docker Compose automatically:
+
+- Creates a network
+- Starts the MySQL container
+- Starts the Flask container
+- Connects both containers
+- Passes environment variables
+- Manages container lifecycle
+
+---
+
+# Project Flow
+
+```text
+Clone Repository
+        │
+        ▼
+docker compose up
+        │
+        ▼
+Create Docker Network
+        │
+        ▼
+Start MySQL Container
+        │
+        ▼
+Start Flask Container
+        │
+        ▼
+Application Running
+        │
+        ▼
+Verify Database
 ```
 
-replaces all three manual commands above, and makes both failure modes from
-Stage 1 structurally impossible:
+---
 
-- **Networking**: compose creates a private network automatically and gives
-  each service DNS resolution by its service name (`db`, `web`) — there's no
-  separate `--network` flag to forget or mismatch.
-- **Persistence**: the named volume `mysql-data` is declared once, in the
-  same file as everything else, so it can't be silently omitted the way a
-  `-v` flag can be forgotten on a long `docker run` command.
-- **Startup order**: `depends_on` with `condition: service_healthy` ensures
-  Flask doesn't even attempt to connect until MySQL's own healthcheck passes
-  — removing the "container up but not actually ready yet" race condition.
+# Project Structure
 
-## Run it
+```text
+flask-mysql-docker-compose/
 
-```bash
-docker compose up --build
+├── app.py
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+├── .env
+├── templates/
+│   └── index.html
+└── README.md
 ```
 
-Visit `http://localhost:5000`.
+---
 
-Stop everything (keeps data):
+# Steps
+
+## Step 1: Clone the Repository
+
+## Step 2: Configure Environment Variables
+
+## Step 3: Build and Start the Application Stack
+
+## Step 4: Verify Running Containers
+
+## Step 5: Access the Application
+
+## Step 6: Verify Data Inside MySQL
+
+## Step 7: Stop the Application Stack
+
+---
+
+# Commands
+
+Clone the repository.
+
+```bash
+git clone <repo-url>
+cd flask-mysql-docker-compose
+```
+
+---
+
+Configure environment variables.
+
+```bash
+cp .env.example .env
+```
+
+---
+
+Build and start everything.
+
+```bash
+docker compose up -d --build
+```
+
+---
+
+Verify running containers.
+
+```bash
+docker ps
+```
+
+---
+
+Open the application.
+
+```
+http://localhost:5000
+```
+
+---
+
+Verify data.
+
+```bash
+docker exec -it mysql-db mysql -u root -p
+```
+
+```sql
+SHOW DATABASES;
+
+USE web_db;
+
+SHOW TABLES;
+
+SELECT * FROM users;
+```
+
+---
+
+Stop the application.
+
 ```bash
 docker compose down
 ```
 
-Stop and wipe all data (start completely fresh):
-```bash
-docker compose down -v
-```
+---
 
-## What changed vs. Stage 1
+# Key Learning
 
-| | Stage 1 (Dockerfile only) | Stage 2 (docker-compose) |
-|---|---|---|
-| Start command | 3 separate `docker` commands, in a specific order | 1 command: `docker compose up` |
-| Networking | Manual `docker network create` + `--network` flags | Automatic, declared once |
-| Persistence | Not configured (data loss risk) | Named volume, declared once |
-| Startup ordering | No ordering guarantee | `depends_on` + healthcheck |
-
-## What's deliberately NOT here yet
-
-- No Kubernetes (Stage 3)
-- No CI/CD (Stage 4)
-- No GitOps (Stage 5)
-
-## Lessons Learned
-
-- A tool that removes an entire class of manual-sequencing bugs (network
-  mismatches, forgotten volume flags) is more valuable here than one that
-  just saves typing — the real win of compose isn't convenience, it's
-  eliminating two specific failure modes that actually occurred in Stage 1.
+- Docker Compose
+- Multi-container applications
+- Services
+- Networks
+- Environment variables
+- Container communication
+- Simplified application deployment
