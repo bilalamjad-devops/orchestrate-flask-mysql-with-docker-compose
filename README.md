@@ -1,6 +1,4 @@
-This is the style I'd recommend for your GitHub README. It's clean, concise, and someone can understand the whole project just by scanning the headings.
 
----
 
 # Docker Compose for a Flask & MySQL Application
 
