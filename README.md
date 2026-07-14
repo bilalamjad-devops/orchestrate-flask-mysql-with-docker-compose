@@ -6,6 +6,9 @@
 
 In this project, you will learn how to orchestrate a multi-container application using **Docker Compose**. Instead of manually creating containers and networks, Docker Compose defines the entire application stack in a single `docker-compose.yml` file and starts all services with one command.
 
+I am using Docker Desktop and Git Bash.
+
+
 ---
 
 ## Project Flow
