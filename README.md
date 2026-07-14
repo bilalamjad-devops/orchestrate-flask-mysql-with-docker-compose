@@ -129,6 +129,9 @@ http://localhost:5000
 
 Submit sample data through the web application.
 
+<img width="1600" height="900" alt="compose 1" src="https://github.com/user-attachments/assets/b6d1ff5b-62d4-4ca8-b3dc-565c992ecbf2" />
+
+
 ---
 
 ### Step 5: Verify Data Inside MySQL
