@@ -21,8 +21,6 @@ services:
       - mysql-db
     env_file:
       - .env
-    environment:
-      DB_HOST: mysql-db
     ports:
       - "5000:5000"
 
