@@ -8,7 +8,7 @@ In this project, you will learn how to orchestrate a multi-container application
 
 ---
 
-# Project Flow
+## Project Flow
 
 ```text
 Developer
@@ -37,7 +37,7 @@ MySQL Container   Flask Container
 
 ---
 
-# Project Structure
+## Project Structure
 
 ```text
 orchestrate-flask-mysql-with-docker-compose/
@@ -54,9 +54,22 @@ orchestrate-flask-mysql-with-docker-compose/
 
 ---
 
-# Steps
+## Steps
 
-## Step 1: Clone the Repository
+Step 1: Clone the Repository
+
+Step 2: Configure Environment Variables
+
+Step 3: Build and Start the Application
+
+Step 4: Verify the Application
+
+Step 5: Verify Data Inside MySQL
+
+Step 6: Stop and Remove the Environment
+
+
+### Step 1: Clone the Repository
 
 ```bash
 git clone <repository-url>
@@ -65,7 +78,7 @@ cd orchestrate-flask-mysql-with-docker-compose
 
 ---
 
-## Step 2: Configure Environment Variables
+### Step 2: Configure Environment Variables
 
 Create a local environment file.
 
@@ -87,7 +100,7 @@ DB_HOST=mysql-db
 
 ---
 
-## Step 3: Build and Start the Application
+### Step 3: Build and Start the Application
 
 Build the Flask image and start all containers.
 
@@ -103,7 +116,7 @@ docker ps
 
 ---
 
-## Step 4: Verify the Application
+### Step 4: Verify the Application
 
 Open your browser.
 
@@ -115,7 +128,7 @@ Submit sample data through the web application.
 
 ---
 
-## Step 5: Verify Data Inside MySQL
+### Step 5: Verify Data Inside MySQL
 
 Enter the MySQL container.
 
@@ -179,7 +192,7 @@ exit
 
 ---
 
-## Step 6: Stop and Remove the Environment
+### Step 6: Stop and Remove the Environment
 
 Stop all running containers and remove the associated volume.
 
@@ -189,7 +202,7 @@ docker compose down -v
 
 ---
 
-# Key Learning
+## Key Learning
 
 After completing this project, you will understand:
 
@@ -205,7 +218,7 @@ After completing this project, you will understand:
 
 ---
 
-# Why Use Docker Volumes?
+### Why Use Docker Volumes?
 
 ```yaml
 volumes:
@@ -241,9 +254,4 @@ This allows MySQL data to survive container recreation, making volumes essential
 
 ---
 
-I have one suggestion for your repo series. Your first repo was **containerize-flask-mysql-application** (manual `docker build` and `docker run`). This second repo should clearly demonstrate the progression:
-
-1. **containerize-flask-mysql-application** → Learn Docker images, containers, networks, and volumes manually.
-2. **orchestrate-flask-mysql-with-docker-compose** → Replace multiple `docker run` commands with a single `docker compose up`.
-
-This sequence tells a clear learning story that recruiters can follow when they browse your GitHub.
+14-July-2026
